@@ -4,7 +4,7 @@ import useLazyLoad from "../utils/useLazyLoad";
 import ProfilePlaceHolder from "../utils/ProfilePlaceHolder";
 import Profile from "./Profile";
 
-const NUM_PER_PAGE = 2;
+const NUM_PER_PAGE = 1;
 const TOTAL_PAGES = 10;
 
 const Home = () => {
@@ -26,7 +26,7 @@ const Home = () => {
           NUM_PER_PAGE * (currentPage % TOTAL_PAGES)
         );
         resolve(data);
-      }, 2000);
+      }, 1000);
     });
   };
 
@@ -42,9 +42,14 @@ const Home = () => {
           );
         })}
       </div>
-      <div ref={triggerRef} className={clsx("trigger", { visible: loading })}>
-        <ProfilePlaceHolder />
-      </div>
+      {data.length !== 10 && (
+        <div
+          ref={data.length !== 10 ? triggerRef : null}
+          className={clsx("trigger", { visible: loading })}
+        >
+          <ProfilePlaceHolder />
+        </div>
+      )}
     </>
   );
 };
