@@ -1,7 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
+import useLazyLoad from "../utils/useLazyLoad";
+import ProfilePlaceHolder from "../utils/ProfilePlaceHolder";
 import Profile from "./Profile";
 
-function Home() {
+const NUM_PER_PAGE = 2;
+const TOTAL_PAGES = 10;
+
+const Home = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -10,13 +16,37 @@ function Home() {
       .then((data) => setUsers(data));
   }, []);
 
+  const triggerRef = useRef(null);
+  const onGrabData = (currentPage) => {
+    // This would be where you'll call your API
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const data = users.slice(
+          ((currentPage - 1) % TOTAL_PAGES) * NUM_PER_PAGE,
+          NUM_PER_PAGE * (currentPage % TOTAL_PAGES)
+        );
+        resolve(data);
+      }, 2000);
+    });
+  };
+
+  const { data, loading } = useLazyLoad({ triggerRef, onGrabData });
+  console.log(data);
+
   return (
-    <div className="container mx-auto px-5">
-      {users.map((user) => (
-        <Profile key={user.id} user={user} />
-      ))}
-    </div>
+    <>
+      <div className="container mx-auto px-5">
+        {data.map((image) => {
+          return (
+            <Profile owner={image["owner"]} imageUrl={image["imageUrl"]} />
+          );
+        })}
+      </div>
+      <div ref={triggerRef} className={clsx("trigger", { visible: loading })}>
+        <ProfilePlaceHolder />
+      </div>
+    </>
   );
-}
+};
 
 export default Home;
