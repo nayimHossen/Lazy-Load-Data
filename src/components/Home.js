@@ -11,7 +11,7 @@ function Home() {
   }, []);
 
   return (
-    <div>
+    <div className="container mx-auto px-5">
       {users.map((user) => (
         <Profile key={user.id} user={user} />
       ))}
